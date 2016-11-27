@@ -1,0 +1,377 @@
+
+Indra, India, 8+ years, UNIX admin along with cloud and devops. We have a requirement to implement BigData platform. I would like to understand how hadoop works to deliver it effectively. Also would like to understand the career options as a bigdata admim, jeffgtx.bigdata@gmail.com
+
+
+
+Velocity : How many Gigs/Megs/Sec
+Volume : How do we store such a large data
+Variety : Structured(Sqoop)/Un-structured(Flume) : How to connect and correlate the data inorder to extract the Meaning out of it.
+Viscocity : The resistance to the flow of data i.e Utilize the data to insights.
+Virality : How quickly info can be distributed to data and people.
+
+BigData Design Patterns: http://www.bigdatapatterns.org/design_patterns/overview
+
+HDFS Default BlockSize = 64 MB(Recommendad)
+Linux BlockSize = 4 kB
+
+128 MB file = 2 Blocks of each 64MB
+100MB file = 2 blocks (64MB + 36MB block) This is possible as underlying filesystem for HDFS is Linux which has a BS of 4KB. So max wastage would be 3KB.
+
+1024MB with Replication factor = 4 : 32 Blocks of 128MB each.
+
+HDFS
+----
+NN
+SNN
+
+
+MAPRED
+-------
+JT
+DN
+  TT
+
+
+				Daemon   		Default Port 	Configuration Parameter
+
+HDFS  
+				Namenode  		50070  			dfs.http.address
+				Datanodes  		50075  			dfs.datanode.http.address
+				SNN				50090  			dfs.secondary.http.address
+
+MR 
+				Jobracker  		50030  			mapred.job.tracker.http.address
+				Tasktrackers  	50060  			mapred.task.tracker.http.address	
+
+
+
+
+
+
+1 Block = 1 Mapper Task
+MAP/SORT/SHUFFEL/PARTITION/REDUCE
+
+
+
+LAPTOP CLUSTER SETUP:
+
+1 Node Cluster -> 2 GB RAM + 30 GB HDD
+2 Node Cluster -> 4 GB RAM + 60 GB HDD
+4 Node Cluster -> 6 GB RAM + 120 GB HDD
+6 Node Cluster -> 8 GB RAM + 180 GB HDD
+10 Node Cluster -> 12 GB RAM + 300 GB HDD
+
+
+
+
+
+A: Hadoop-Prequisites:
+1. List of softwares
+____________________
+
+a. Vmware Workstation/VirtualBox
+http://store.vmware.com/store/vmware/en_US/pd/productID.323700100?gclid=CPCCn-jYqdACFYyLaQodwawKqg
+http://download.virtualbox.org/virtualbox/5.1.8/VirtualBox-5.1.8-111374-Win.exe
+
+
+b. CentOS VM:
+http://www.osboxes.org/centos/#centos-68-vbox
+
+Ubuntu
+RedHat
+SuSE
+Debian
+Oracle ELinux
+Cloud -> AWS Cloud/Microsoft/Google Cloud/Rackspace
+
+c. Build Guide of Hadoop for building the cluster on AWS Cloud:
+http://www.edureka.co/blog/install-apache-hadoop-cluster/
+
+d. Hadoop 1.2.1:
+http://www-us.apache.org/dist/hadoop/core/hadoop-1.2.1/hadoop-1.2.1.tar.gz
+
+e. JDK(Java Development Kit): version 6 or 7:
+JDK 7u75
+http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html#jdk-7u75-oth-JPR
+
+f. Putty:
+https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe
+
+g. WinSCP:
+https://winscp.net/eng/download.php#download2
+
+
+2. Install 6 VMs (NN,SNN, JT, DN1, DN2, DN3) and add default route. https://www.cyberciti.biz/faq/centos-add-route-command/
+3. Disable IPV6: http://blog.acsystem.sk/linux/rhel-6-centos-6-disabling-ipv6-in-system
+4. Create sshkeys for password less authentication, add hadoop user and group, create links for java and hadoop in /home/hadoop/]
+5. Disable firewalls. : https://www.cyberciti.biz/faq/fedora-redhat-centos-5-6-disable-firewall/
+
+We need to edit 6 files as below.
+
+==================================
+	<property>
+		<name> </name>
+		<value> </value>
+	</property>
+	
+==================================
+
+* .bash_profile : Set the path to map both java and hadoop home
+* hadoop-env.sh : Set the java path. : /home/hadoop/java
+* core-site.xml : hdfs URI 
+	<property>
+		<name>fs.default.name</name>
+		<value>hdfs://192.168.10.10:8020</value>
+	</property>
+	
+* hdfs-site.xml : NN dir, DD dir, repication and blocksize 
+	<property>
+		<name>dfs.name.dir</name>
+		<value>/home/hadoop/hadoop/logs/nn</value>
+	</property>
+
+	<property>
+		<name>dfs.data.dir</name>
+		<value>/home/hadoop/hadoop/logs/dn</value>
+	</property>
+	
+	<property>
+		<name>fs.checkpoint.dir</name>
+		<value>/home/hadoop/hadoop/logs/snn</value>
+	</property>
+
+	<property>
+		<name>dfs.block.size</name>
+		<value>65536</value>
+	</property>
+
+	<property>
+		<name>dfs.replication</name>
+		<value>2</value>
+	</property>
+	
+	<property>
+		<name>dfs.namenode.checkpoint.transactions</name>
+		<value>200000</value>
+	</property>
+
+	<property>
+		<name>dfs.namenode.checkpoint.period</name>
+		<value>1</value>
+	</property>
+
+	
+* mapred-site.xml : Mapred URI, max mappers annd max reducers.
+	<property>
+		<name>mapred.job.tracker</name>
+		<value>192.168.10.12:8021</value>
+	</property>
+
+	<property>
+		<name>mapred.tasktracker.map.task.maximum</name>
+		<value>3</value>
+	</property>
+	
+	<property>
+		<name>mapred.tasktracker.reduce.task.maximum</name>
+		<value>3</value>
+	</property>
+	
+	
+
+* masters : SNN IPs or Hostnames
+	192.168.10.10
+
+* slaves : Datanode IPs or Hostnames
+	192.168.10.10
+
+
+
+
+
+	
+COMMANDS:
+	for i in nn jt snn dn1 dn2 dn3; do echo $i; ssh $i ls -l /home/hadoop/hadoop/logs; echo ============; done
+	for i in nn jt snn dn1 dn2 dn3; do echo $i; ssh $i rm -rf /home/hadoop/hadoop/logs/*; echo ============; done
+	for i in nn jt snn dn1 dn2 dn3; do ssh $i "uname -n && /home/hadoop/java/bin/jps && echo ============"; done
+	
+
+
+	
+{Steps to Add/Remove a datanode
+================================
+
+1. Add a linux node. Update the /etc/hosts file. Add the hadoop user and configure passwordless ssh from NN to the DN and JT to the TT.
+2. copy the datanode binaries and jdk from any existing datanode to the new datanode.
+3. change the configuration in the namenode and JT
+
+add a property:
+in NN in hdfs-site.xml:
+Property name: dfs.hosts
+property value: location of a file that contains a list of all the datanodes including existing ones
+		which are allowed to connect to the namenode.
+
+in JT in mapred-site.xml:
+Property name: mapred.hosts
+property value: location of a file that contains a list of all the tasktrackers including existing ones
+		which are allowed to connect to the jobtracker.
+
+
+
+4. Run the commands
+on NN: hadoop dfsadmin -refreshNodes
+on JT: hadoop mradmin -refreshNodes
+
+5. Start the new datanode and tasktracker.
+hadoop-daemon.sh start datanode
+hadoop-daemon.sh start tasktracker
+
+6. Balancer -> Balance the existing data stores of the datanodes.
+==============================================================================
+Remove:
+
+1. change the configuration in the namenode and JT
+
+add a property:
+in NN in hdfs-site.xml:
+Property name: dfs.hosts.exclude
+property value: location of a file that contains a list of all the datanodes 
+		which are not allowed to connect to the namenode.
+
+in JT in mapred-site.xml:
+Property name: mapred.hosts.exclude
+property value: location of a file that contains a list of all the tasktrackers 
+		which are not allowed to connect to the jobtracker.
+
+
+
+2. Run the commands
+on NN: hadoop dfsadmin -refreshNodes
+on JT: hadoop mradmin -refreshNodes
+
+3. Start the new datanode and tasktracker.
+hadoop-daemon.sh stop datanode
+hadoop-daemon.sh stop tasktracker
+
+4. Balancer -> Balance the existing data stores of the datanodes.
+=================================================================================
+}
+
+
+
+
+
+HDFS Version: nn/current/VERTION :
+	1.2.1 : -41
+	2.7.3 : -63
+	
+
+Steps to upgrade hadoop HDFS from version 1 to 2
+================================================
+
+1. Stop all the mapreduce jobs running in the cluster.
+2. 
+	#stop-mapred.sh
+	
+3. Take the backup of HDFS Metadata:
+	a. 
+		#mkdir BACKUP.
+	b. 
+		#hadoop fsck / -blocks -files -locations > BACKUP/fsck.bkup
+	c. 
+		#hadoop dfsadmin -report > BACKUP/dfsadmin.bkp
+	d. 
+		#hadoop fs -lsr / > BACKUP/lsr.bkp
+	e. Take the metadata backup:
+		#cp -p data/nn BACKUP
+
+4. [optional] Take the backup of HDFS data. [bcoz of huge size its optional]
+	a. 
+		#hadoop distcp <source hdfs> <dest hdfs> : For hdfs only. 
+			OR
+	b. 
+		#hadoop dfs -get <hdfs> <linux fs>
+			OR
+	c. 
+		#hadoop dfs -copyToLocal <hdfs> <linux>
+	
+5. 
+	#stop-dfs.sh
+
+____________________________
+
+6. Install the hadoop vresion 2 Cluster.
+	a. get hadoop v2 binaries
+	b. copy hadoop v2 on all the nodes
+	c. extact the binaries
+	d. configure the hadoop v2
+	
+
+H v1					h v2						Values
+____					_____ 						______
+fs.default.name			fs.defaultFS				--> remains same as H v1
+dfs.name.dir			dfs.namenode.name.dir		--> remains same as H v1
+fs.checkpoint.dir		dfs.namenode.checkpoint.dir	--> remains same as H v1
+dfs.replication			dfs.repication				--> remains same as H v1
+dfs.block.size			dfs.blocksize				--> remains same as H v1
+
+
+
+FOR SNN:
+Masters					dfs.namenode.secondary.http-address		--> <snn ip>:50090
+
+
+slaves: --> remains same as H v1
+hadoop-env.sh : --> remains same as H v1
+
+
+7. NOTE: Dont format the name node.
+	start the name node with the upgrade option.
+		#hadoop-daemon.sh start namenode -upgrade
+	
+	#start-dfs.sh --> Will start all the DNs and SNN and upgrade their metadata as well.
+
+8. Run same commands mentioned from step 3(BACKUP) and perform a comparision.
+
+
+ROLL-BACK:
+1. 
+	#stop-dfs.sh
+2. Replace the new metadata with old metadata (from step 3 , step e)
+3. 
+	#start-dfs.sh 
+
+9. If there are no differences finalize the upgrade	
+	# hdfs dfsadmin -finalizeupgrade
+
+
+
+
+
+SAFE MODE: is the read-only mode for hdfs cluster where it doesn;t allow any file modifications.
+	#hdfs dfsadmin -safemode enter  --> Enter safemode
+	#hdfs dfsadmin -safemode get	--> CHeck the state of safemode
+	#hdfs dfsadmin -safemode leave	--> Leave safemode
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+THING TO GET FROM RAHUL  (rahul.k@edureka.co)
+=======================
+1. Do you also give us any idea about kerberos as part of hadoop sercurity?
+2. Can you name few day-2-day issues working as hadoop admin?

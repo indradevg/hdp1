@@ -1,0 +1,66 @@
+::::::::::::::
+core-site.xml
+::::::::::::::
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+        <property>
+                <name>fs.default.name</name>
+                <value>hdfs://192.168.10.10:8020</value>
+        </property>
+
+</configuration>
+::::::::::::::
+hdfs-site.xml
+::::::::::::::
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+
+        <property>
+                <name>dfs.data.dir</name>
+                <value>/home/hadoop/hadoop/logs/dn</value>
+        </property>
+
+
+</configuration>
+::::::::::::::
+mapred-site.xml
+::::::::::::::
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+
+        <property>
+                <name>mapred.job.tracker</name>
+                <value>192.168.10.12:8021</value>
+        </property>
+
+
+        <property>
+                <name>mapred.tasktracker.map.task.maximum</name>
+                <value>3</value>
+        </property>
+
+        <property>
+                <name>mapred.tasktracker.reduce.task.maximum</name>
+                <value>3</value>
+        </property>
+
+
+</configuration>
+::::::::::::::
+masters
+::::::::::::::
+::::::::::::::
+slaves
+::::::::::::::

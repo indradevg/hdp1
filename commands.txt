@@ -1,0 +1,6 @@
+hadoop fs -ls /
+hadoop fs -put <local> <hdfs loc>
+hadoop fsck / -files -blocks -locations
+hadoop fsck / -delete (Delete Corrupted files)
+hadoop fs -rmr -skipTrash <hdfs loc>
+hadoop fs -setrep -R 2 /tmp   ---> Set the replication for an existing block.
