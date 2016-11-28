@@ -1,25 +1,22 @@
 
 #hadoop fs -ls /
-
 #hadoop fs -put <local> <hdfs loc>
-
 #hadoop fs -D dfs.replication=n  -put <local> <hdfs loc>
-
-#hadoop fsck / -files -blocks -locations
-
-#hadoop fsck / -delete (Delete Corrupted files)
-
 #hadoop fs -rmr -skipTrash <hdfs loc>
-
 #hadoop fs -setrep -R 2 /tmp   ---> Set the replication for an existing block.
 
+
+#hadoop fsck / -files -blocks -locations
+#hadoop fsck / -delete (Delete Corrupted files)
+
+
 #hadoop secondarynamenode -checkpoint force   ---> Force checkpoint
-
 #hadoop dfsadmin -safemode get/enter/leave/wait
-
 #hadoop dfsadmin -savenamespace
 
 #hadoop oiv -p Indented -i ./fsimage -o /tmp/oivedits
 
-#hadoop job -list
+# hadoop dfsadmin -refreshNodes
+# hadoop mradmin -refreshNodes
 
+#hadoop job -list

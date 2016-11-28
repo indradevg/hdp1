@@ -283,10 +283,9 @@ Steps to upgrade hadoop HDFS from version 1 to 2
 ================================================
 
 1. Stop all the mapreduce jobs running in the cluster.
-2. 
 	#stop-mapred.sh
 	
-3. Take the backup of HDFS Metadata:
+2. Take the backup of HDFS Metadata:  [This step is really important for the roll-back to be possible.]
 	a. 
 		#mkdir BACKUP.
 	b. 
@@ -296,9 +295,9 @@ Steps to upgrade hadoop HDFS from version 1 to 2
 	d. 
 		#hadoop fs -lsr / > BACKUP/lsr.bkp
 	e. Take the metadata backup:
-		#cp -p data/nn BACKUP
+		#cp -rvp /home/hadoop/hadoop/logs/nn BACKUP
 
-4. [optional] Take the backup of HDFS data. [bcoz of huge size its optional]
+3. [optional] Take the backup of HDFS data. [bcoz of huge size its optional]
 	a. 
 		#hadoop distcp <source hdfs> <dest hdfs> : For hdfs only. 
 			OR
@@ -308,17 +307,50 @@ Steps to upgrade hadoop HDFS from version 1 to 2
 	c. 
 		#hadoop dfs -copyToLocal <hdfs> <linux>
 	
-5. 
+4. 
 	#stop-dfs.sh
 
 ____________________________
 
-6. Install the hadoop vresion 2 Cluster.
+5. Install the hadoop vresion 2 Cluster.
 	a. get hadoop v2 binaries
 	b. copy hadoop v2 on all the nodes
 	c. extact the binaries
 	d. configure the hadoop v2
 	
+
+6. NOTE: Dont format the name node.
+	start the name node with the upgrade option.
+		# hadoop-daemon.sh start namenode -upgrade
+		# start-dfs.sh --> Will start all the DNs and SNN and upgrade their metadata as well.
+
+7. Run same commands mentioned from step 2(BACKUP) and perform a comparision.
+
+=======================================================================
+ROLL-BACK:
+1. 
+	#stop-dfs.sh
+2. Replace the new metadata with old metadata (from step 3 , step e)
+
+3. 
+	#start-dfs.sh 
+=======================================================================
+
+8. If there are no differences finalize the upgrade	
+	# hdfs dfsadmin -finalizeupgrade
+
+
+DIFFERENCES IN V2.0: (https://wiki.apache.org/hadoop/poweredbyYarn)
+
+	1. NN is highly avaliable(automatic and maunal)
+	2. NN is horizontally scallable (Can have multiple NNs in a single cluster viz: Federations)
+	3. JT is removed completely for a more standard/scalable and decoupled engine has been added.
+		GENERIC PROCESSING ENGINE: YET ANOTHER RESOURCE NEGOTIATOR (YARN)
+	
+	V1: JobTracker  ==  JobManagement		+		Resource Management 	+		History of jobs   		(Only MR Jobs used to get executed)
+	v2:	YARN		==	Application Master 			Resource Manager				JobHistory Server		(Not just MR, but also others live SPARK, GIRAPH, OPENMPI, TEZ, etc..,)
+													Node Manager
+													
 
 H v1					h v2						Values
 ____					_____ 						______
@@ -337,28 +369,10 @@ Masters					dfs.namenode.secondary.http-address		--> <snn ip>:50090
 slaves: 		--> remains same as H v1
 hadoop-env.sh : --> remains same as H v1
 
-
-7. NOTE: Dont format the name node.
-	start the name node with the upgrade option.
-		#hadoop-daemon.sh start namenode -upgrade
+						
+													
 	
-	#start-dfs.sh --> Will start all the DNs and SNN and upgrade their metadata as well.
-
-8. Run same commands mentioned from step 3(BACKUP) and perform a comparision.
-
-
-ROLL-BACK:
-1. 
-	#stop-dfs.sh
-2. Replace the new metadata with old metadata (from step 3 , step e)
-3. 
-	#start-dfs.sh 
-
-9. If there are no differences finalize the upgrade	
-	# hdfs dfsadmin -finalizeupgrade
-
-
-
+	
 
 
 SAFE MODE: is the read-only mode for hdfs cluster where it doesn;t allow any file modifications.

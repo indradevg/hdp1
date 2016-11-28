@@ -1,0 +1,39 @@
+1. Add a inventory file with below entries. We need to add extra ansible_user and ansible_ssh_pass as, ansible directly work as root.
+
+	#linux@hydannod1:~$ cat hadoop
+		192.168.10.10   ansible_user=hadoop     ansible_ssh_pass=hadoop
+		192.168.10.11   ansible_user=hadoop     ansible_ssh_pass=hadoop
+		192.168.10.12   ansible_user=hadoop     ansible_ssh_pass=hadoop
+		192.168.10.13   ansible_user=hadoop     ansible_ssh_pass=hadoop
+		192.168.10.14   ansible_user=hadoop     ansible_ssh_pass=hadoop
+		192.168.10.15   ansible_user=hadoop     ansible_ssh_pass=hadoop
+	
+	# ansible -i ./hadoop all -m command -a "uname -a"
+	
+		
+2. Now ansible commands.
+	
+	# ansible -i hdp_hosts1 all -m ping -u hadoop --ask-pass
+	# ansible -i ./hadoop all -m ping
+	
+3. Create a playbook as below to update the replication on all hosts.
+
+##  replication.yml
+- hosts: all
+  tasks:
+    - name: insert/update replication as 2 in all the hadoop cluster.
+      blockinfile:
+        dest: /home/hadoop/hadoop/conf/hdfs-site.xml
+        backup: yes
+        state: present
+        marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+        insertafter: "<configuration>"
+        block: |
+          <property>
+            <name>dfs.replication</name>
+            <value>2</value>
+          </property>
+
+
+		  
+# ansible-playbook -i ./hdp_hosts replication.yml -u hadoop --ask-pass
