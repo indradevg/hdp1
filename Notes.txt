@@ -43,7 +43,14 @@ MR
 				Jobracker  		50030  			mapred.job.tracker.http.address
 				Tasktrackers  	50060  			mapred.task.tracker.http.address	
 
+We can access the loaded configuration of role of a particular host as below.
 
+	NN: 192.168.10.10:50070/conf 
+	SNN: 192.168.10.11:50090/conf
+	JT: 192.168.10.12:50030/conf 
+	DN: 192.168.10.13:50075/conf 
+	TT: 192.168.10.13:50060/conf
+	
 
 
 
@@ -105,6 +112,11 @@ https://winscp.net/eng/download.php#download2
 3. Disable IPV6: http://blog.acsystem.sk/linux/rhel-6-centos-6-disabling-ipv6-in-system
 4. Create sshkeys for password less authentication, add hadoop user and group, create links for java and hadoop in /home/hadoop/]
 5. Disable firewalls. : https://www.cyberciti.biz/faq/fedora-redhat-centos-5-6-disable-firewall/
+	#iptables --flush
+	#service iptables stop
+	#chkconfig iptables off
+	# iptables -L -v -n 
+	
 
 We need to edit 6 files as below.
 
@@ -187,13 +199,14 @@ We need to edit 6 files as below.
 
 
 
+	
 
 
 	
 COMMANDS:
-	for i in nn jt snn dn1 dn2 dn3; do echo $i; ssh $i ls -l /home/hadoop/hadoop/logs; echo ============; done
-	for i in nn jt snn dn1 dn2 dn3; do echo $i; ssh $i rm -rf /home/hadoop/hadoop/logs/*; echo ============; done
-	for i in nn jt snn dn1 dn2 dn3; do ssh $i "uname -n && /home/hadoop/java/bin/jps && echo ============"; done
+	#for i in nn jt snn dn1 dn2 dn3; do echo $i; ssh $i ls -l /home/hadoop/hadoop/logs; echo ============; done
+	#for i in nn jt snn dn1 dn2 dn3; do echo $i; ssh $i rm -rf /home/hadoop/hadoop/logs/*; echo ============; done
+	#for i in nn jt snn dn1 dn2 dn3; do ssh $i "uname -n && /home/hadoop/java/bin/jps && echo ============"; done
 	
 
 
@@ -321,7 +334,7 @@ FOR SNN:
 Masters					dfs.namenode.secondary.http-address		--> <snn ip>:50090
 
 
-slaves: --> remains same as H v1
+slaves: 		--> remains same as H v1
 hadoop-env.sh : --> remains same as H v1
 
 
