@@ -221,7 +221,7 @@ COMMANDS:
 add a property:
 in NN in hdfs-site.xml:
 Property name: dfs.hosts
-property value: location of a file that contains a list of all the datanodes including existing ones
+property value: location of a file that contains a list of IPs of all the datanodes including existing ones
 		which are allowed to connect to the namenode.
 
 in JT in mapred-site.xml:

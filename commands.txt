@@ -13,10 +13,14 @@
 #hadoop secondarynamenode -checkpoint force   ---> Force checkpoint
 #hadoop dfsadmin -safemode get/enter/leave/wait
 #hadoop dfsadmin -savenamespace
+#hadoop dfsadmin -metasave abcd.txt
 
 #hadoop oiv -p Indented -i ./fsimage -o /tmp/oivedits
+
+# hadoop balancer -threshold 
 
 # hadoop dfsadmin -refreshNodes
 # hadoop mradmin -refreshNodes
 
 #hadoop job -list
+
